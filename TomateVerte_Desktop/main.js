@@ -3,12 +3,13 @@ const url = require('url');
 const path = require('path');
 
 const {app, BrowserWindow, Menu, ipcMain} = electron;
+var dbTools = require('./dbFunctions');
 
 //set environment 
 //process.env.NODE_ENV = 'production';
 
 let mainWindow;
-let addWindow;
+let paramWindow;
 
 //listen for app to be ready
 app.on('ready', function(){
@@ -32,31 +33,33 @@ app.on('ready', function(){
 });
 
 
-//handle createAddWindow
-function createAddWindow() {
+//handle createParamWindow
+function createParamWindow() {
     //Create a new window
-    addWindow = new BrowserWindow({
+    paramWindow = new BrowserWindow({
         width: 300,
         height: 200,
-        title: 'Ajouter un article dans la liste'
+        title: 'Paramétrage'
     });
     //load hml in the mainWindow
-    addWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'addWindow.html'),
+    paramWindow.loadURL(url.format({
+        pathname: path.join(__dirname, 'paramWindow.html'),
         protocol:'file:',
         slashes: true
     }));
     //garbage collection handle
-    addWindow.on('close', function(){
-        addWindow = null;
+    paramWindow.on('close', function(){
+        paramWindow = null;
     });
 };
 
-//catch item: add
-ipcMain.on('item:add', function(e, item){
-    mainWindow.webContents.send('item:add', item);
-    addWindow.close();
+//catch param: add
+ipcMain.on('ipRaspberry:update', function(e, paramValue){
+    dbTools.setParam('ipRaspberry', paramValue);
+    // mainWindow.webContents.send('ipRaspberry:update', paramValue);
+    paramWindow.close();
 });
+
 
 
 //create menu template
@@ -65,15 +68,9 @@ const mainMenuTemplate = [
         label:'Fichier',
         submenu:[
             {
-                label: 'Ajouter',
+                label: 'Paramétrer',
                 click(){
-                    createAddWindow()
-                }
-            },
-            {
-                label: 'Effacer Tout',
-                click(){
-                    mainWindow.webContents.send('item:clear');
+                    createParamWindow()
                 }
             },
             {

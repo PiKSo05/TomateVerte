@@ -10,26 +10,32 @@
     <div class="container">
         <form>
             <div>
-                <label>Entrer un article</label>
-                <input type="text" id="item" autofocus>
+                <label>Ip RaspBerry</label>
+                <input type="text" id="ipRaspberry" autofocus>
             </div>
-            <button class="btn waves-effect waves-light" type="submit">add item</button>
+            <button class="btn waves-effect waves-light" type="submit">Valider</button>
         </form>
     </div>
 
     <script>
         const electron = require('electron');
         const { ipcRenderer } = electron;
+        var dbTools = require('./dbFunctions');
+
+        //load ipRaspberry
+        const ipRaspberryInput = document.querySelector('#ipRaspberry');
+        var paramValue = dbTools.getParam('ipRaspberry');
+        console.log('paramValue = ' + paramValue);
+        ipRaspberryInput.value = paramValue;
 
         const form = document.querySelector('form');
         form.addEventListener('submit', submitForm);
 
         function submitForm(e) {
             e.preventDefault();
-            const item = document.querySelector('#item').value;
-            ipcRenderer.send('item:add', item);
+            const ipRaspberry = document.querySelector('#ipRaspberry').value;
+            ipcRenderer.send('ipRaspberry:update', ipRaspberry);
         }
-
     </script>
 </body>
 

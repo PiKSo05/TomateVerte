@@ -39,10 +39,14 @@
         const { ipcRenderer } = electron;
         const ul = document.querySelector('ul');
         const request = require('request');
+        
+        var dbTools = require('./dbFunctions');
+
+        var ipRaspberry = dbTools.getParam(ipRaspberry);
      
         function allumerLed(event) {
             var couleur = event.target.Couleur;
-            var url = 'http://192.168.0.32:5000/allumerLed' + couleur + '/';
+            var url = 'http://192.168.0.31:5000/allumerLed' + couleur + '/';
             console.log("url:" + url);
             request(url, { json: true }, (err, res, body) => {
                 if (err) { return console.log(err); }
@@ -50,7 +54,7 @@
         }
         function eteindreLed(event) {
             var couleur = event.target.Couleur;
-            var url = 'http://192.168.0.32:5000/eteindreLed' + couleur + '/';
+            var url = 'http://192.168.0.31:5000/eteindreLed' + couleur + '/';
             console.log("url:" + url);
             request(url, { json: true }, (err, res, body) => {
                 if (err) { return console.log(err); }
