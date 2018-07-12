@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title>Liste de courses</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+</head>
+
+<body>
+    <nav>
+        <div class="nav-wrapper">
+            <a class="brand-logo center">Tomate Verte</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <button id="btnAllumerLedVerte" class="btn waves-effect waves-light">Allumer LED Verte</button>
+    </div>
+    <div class="container">
+        <button id="btnEteindreLedVerte" class="btn waves-effect waves-light">Eteindre LED Verte</button>
+    </div>
+
+    <div class="container">
+        <button id="btnAllumerLedOrange" class="btn waves-effect waves-light">Allumer LED Orange</button>
+    </div>
+    <div class="container">
+        <button id="btnEteindreLedOrange" class="btn waves-effect waves-light">Eteindre LED Orange</button>
+    </div>
+
+    <div class="container">
+        <button id="btnAllumerLedRouge" class="btn waves-effect waves-light">Allumer LED Rouge</button>
+    </div>
+    <div class="container">
+        <button id="btnEteindreLedRouge" class="btn waves-effect waves-light">Eteindre LED Rouge</button>
+    </div>
+   
+    <script>
+        const electron = require('electron');
+        const { ipcRenderer } = electron;
+        const ul = document.querySelector('ul');
+        const request = require('request');
+     
+        function allumerLed(event) {
+            var couleur = event.target.Couleur;
+            var url = 'http://192.168.0.32:5000/allumerLed' + couleur + '/';
+            console.log("url:" + url);
+            request(url, { json: true }, (err, res, body) => {
+                if (err) { return console.log(err); }
+            });
+        }
+        function eteindreLed(event) {
+            var couleur = event.target.Couleur;
+            var url = 'http://192.168.0.32:5000/eteindreLed' + couleur + '/';
+            console.log("url:" + url);
+            request(url, { json: true }, (err, res, body) => {
+                if (err) { return console.log(err); }
+            });
+        }
+
+        const btnAllumerLedVerte = document.querySelector('#btnAllumerLedVerte');
+        btnAllumerLedVerte.addEventListener("click", allumerLed, false);
+        btnAllumerLedVerte.Couleur = 'Verte';
+
+        const btnEteindreLedVerte = document.querySelector('#btnEteindreLedVerte');
+        btnEteindreLedVerte.addEventListener("click", eteindreLed);
+        btnEteindreLedVerte.Couleur = 'Verte';
+        
+        const btnAllumerLedOrange = document.querySelector('#btnAllumerLedOrange');
+        btnAllumerLedOrange.addEventListener("click", allumerLed, false);
+        btnAllumerLedOrange.Couleur = 'Orange';
+
+        const btnEteindreLedOrange = document.querySelector('#btnEteindreLedOrange');
+        btnEteindreLedOrange.addEventListener("click", eteindreLed);
+        btnEteindreLedOrange.Couleur = 'Orange';
+        
+        const btnAllumerLedRouge = document.querySelector('#btnAllumerLedRouge');
+        btnAllumerLedRouge.addEventListener("click", allumerLed, false);
+        btnAllumerLedRouge.Couleur = 'Rouge';
+
+        const btnEteindreLedRouge = document.querySelector('#btnEteindreLedRouge');
+        btnEteindreLedRouge.addEventListener("click", eteindreLed);
+        btnEteindreLedRouge.Couleur = 'Rouge';
+
+    </script>
+</body>
+
+</html>
