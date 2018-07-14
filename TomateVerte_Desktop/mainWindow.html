@@ -9,7 +9,7 @@
 <body>
     <nav>
         <div class="nav-wrapper">
-            <a class="brand-logo center">Tomate Verte</a>
+            <a class="brand-logo center">Tomate Corentin</a>
         </div>
     </nav>
 
@@ -33,31 +33,52 @@
     <div class="container">
         <button id="btnEteindreLedRouge" class="btn waves-effect waves-light">Eteindre LED Rouge</button>
     </div>
-   
+
     <script>
         const electron = require('electron');
         const { ipcRenderer } = electron;
         const ul = document.querySelector('ul');
         const request = require('request');
-        
-        var dbTools = require('./dbFunctions');
+        const dbTools = require('./dbFunctions');
 
-        var ipRaspberry = dbTools.getParam(ipRaspberry);
-     
+        // dbTools.getParam('ipRaspberry', (err, paramValue) => {
+        //     var urlService = paramValue;
+        //     console.log('urlService : ' + urlService);
+        // });
+
+        //var urlService = "http://192.168.0.31:5000";
+
         function allumerLed(event) {
-            var couleur = event.target.Couleur;
-            var url = 'http://192.168.0.31:5000/allumerLed' + couleur + '/';
-            console.log("url:" + url);
-            request(url, { json: true }, (err, res, body) => {
-                if (err) { return console.log(err); }
+            dbTools.getParam('ipRaspberry', function (paramValue) {
+                var couleur = event.target.Couleur;
+                var commande = 'allumerLed' + couleur;
+                console.log("commande:" + commande);
+
+                var urlService = paramValue;
+                console.log('urlService : ' + urlService);
+                var urlCommande = urlService + '/' + commande + '/';
+                console.log("urlCommande:" + urlCommande);
+
+                request(urlCommande, { json: true }, (err, res, body) => {
+                    if (err) { return console.log(err); }
+                });
             });
         }
+
         function eteindreLed(event) {
-            var couleur = event.target.Couleur;
-            var url = 'http://192.168.0.31:5000/eteindreLed' + couleur + '/';
-            console.log("url:" + url);
-            request(url, { json: true }, (err, res, body) => {
-                if (err) { return console.log(err); }
+            dbTools.getParam('ipRaspberry', function (paramValue) {
+                var couleur = event.target.Couleur;
+                var commande = 'eteindreLed' + couleur;
+                console.log("commande:" + commande);
+
+                var urlService = paramValue;
+                console.log('urlService : ' + urlService);
+                var urlCommande = urlService + '/' + commande + '/';
+                console.log("urlCommande:" + urlCommande);
+                
+                request(urlCommande, { json: true }, (err, res, body) => {
+                    if (err) { return console.log(err); }
+                });
             });
         }
 
@@ -68,7 +89,7 @@
         const btnEteindreLedVerte = document.querySelector('#btnEteindreLedVerte');
         btnEteindreLedVerte.addEventListener("click", eteindreLed);
         btnEteindreLedVerte.Couleur = 'Verte';
-        
+
         const btnAllumerLedOrange = document.querySelector('#btnAllumerLedOrange');
         btnAllumerLedOrange.addEventListener("click", allumerLed, false);
         btnAllumerLedOrange.Couleur = 'Orange';
@@ -76,7 +97,7 @@
         const btnEteindreLedOrange = document.querySelector('#btnEteindreLedOrange');
         btnEteindreLedOrange.addEventListener("click", eteindreLed);
         btnEteindreLedOrange.Couleur = 'Orange';
-        
+
         const btnAllumerLedRouge = document.querySelector('#btnAllumerLedRouge');
         btnAllumerLedRouge.addEventListener("click", allumerLed, false);
         btnAllumerLedRouge.Couleur = 'Rouge';
@@ -84,6 +105,7 @@
         const btnEteindreLedRouge = document.querySelector('#btnEteindreLedRouge');
         btnEteindreLedRouge.addEventListener("click", eteindreLed);
         btnEteindreLedRouge.Couleur = 'Rouge';
+
 
     </script>
 </body>
