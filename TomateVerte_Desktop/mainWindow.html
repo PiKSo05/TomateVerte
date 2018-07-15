@@ -41,17 +41,11 @@
         const request = require('request');
         const dbTools = require('./dbFunctions');
 
-        // dbTools.getParam('ipRaspberry', (err, paramValue) => {
-        //     var urlService = paramValue;
-        //     console.log('urlService : ' + urlService);
-        // });
-
-        //var urlService = "http://192.168.0.31:5000";
-
-        function allumerLed(event) {
+        function actionLed(event) {
             dbTools.getParam('ipRaspberry', function (paramValue) {
                 var couleur = event.target.Couleur;
-                var commande = 'allumerLed' + couleur;
+                var action = event.target.Action;
+                var commande = action + 'Led' + couleur;
                 console.log("commande:" + commande);
 
                 var urlService = paramValue;
@@ -59,23 +53,6 @@
                 var urlCommande = urlService + '/' + commande + '/';
                 console.log("urlCommande:" + urlCommande);
 
-                request(urlCommande, { json: true }, (err, res, body) => {
-                    if (err) { return console.log(err); }
-                });
-            });
-        }
-
-        function eteindreLed(event) {
-            dbTools.getParam('ipRaspberry', function (paramValue) {
-                var couleur = event.target.Couleur;
-                var commande = 'eteindreLed' + couleur;
-                console.log("commande:" + commande);
-
-                var urlService = paramValue;
-                console.log('urlService : ' + urlService);
-                var urlCommande = urlService + '/' + commande + '/';
-                console.log("urlCommande:" + urlCommande);
-                
                 request(urlCommande, { json: true }, (err, res, body) => {
                     if (err) { return console.log(err); }
                 });
@@ -83,28 +60,34 @@
         }
 
         const btnAllumerLedVerte = document.querySelector('#btnAllumerLedVerte');
-        btnAllumerLedVerte.addEventListener("click", allumerLed, false);
+        btnAllumerLedVerte.addEventListener("click", actionLed, false);
         btnAllumerLedVerte.Couleur = 'Verte';
+        btnAllumerLedVerte.Action = 'allumer';
 
         const btnEteindreLedVerte = document.querySelector('#btnEteindreLedVerte');
-        btnEteindreLedVerte.addEventListener("click", eteindreLed);
+        btnEteindreLedVerte.addEventListener("click", actionLed);
         btnEteindreLedVerte.Couleur = 'Verte';
+        btnEteindreLedVerte.Action = 'eteindre';
 
         const btnAllumerLedOrange = document.querySelector('#btnAllumerLedOrange');
-        btnAllumerLedOrange.addEventListener("click", allumerLed, false);
+        btnAllumerLedOrange.addEventListener("click", actionLed, false);
         btnAllumerLedOrange.Couleur = 'Orange';
+        btnAllumerLedOrange.Action = 'allumer';
 
         const btnEteindreLedOrange = document.querySelector('#btnEteindreLedOrange');
-        btnEteindreLedOrange.addEventListener("click", eteindreLed);
+        btnEteindreLedOrange.addEventListener("click", actionLed);
         btnEteindreLedOrange.Couleur = 'Orange';
+        btnEteindreLedOrange.Action = 'eteindre';
 
         const btnAllumerLedRouge = document.querySelector('#btnAllumerLedRouge');
-        btnAllumerLedRouge.addEventListener("click", allumerLed, false);
+        btnAllumerLedRouge.addEventListener("click", actionLed, false);
         btnAllumerLedRouge.Couleur = 'Rouge';
+        btnAllumerLedRouge.Action = 'allumer';
 
         const btnEteindreLedRouge = document.querySelector('#btnEteindreLedRouge');
-        btnEteindreLedRouge.addEventListener("click", eteindreLed);
+        btnEteindreLedRouge.addEventListener("click", actionLed);
         btnEteindreLedRouge.Couleur = 'Rouge';
+        btnEteindreLedRouge.Action = 'eteindre';
 
 
     </script>
