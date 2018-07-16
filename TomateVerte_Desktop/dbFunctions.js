@@ -14,16 +14,6 @@ module.exports = {
     getParam: function (paramName, callback) {
         console.log('get parameter value : ' + paramName);
 
-        // var docs = db.find({ name: paramName });
-        // if (docs.length !== 0) {
-        //     var paramValue = docs[0].value;
-        //     console.log('get parameter value : ' + paramName + ' = ' + paramValue);
-        //     return paramValue;
-        // }
-        // else {
-        //     console.log('paramètre inexistant : ' + paramName);
-        //     return null;
-        // }
         db.find({ name: paramName },  (err, docs) => {
             if (docs.length !== 0) {
                 var paramValue = docs[0].value;
@@ -36,17 +26,5 @@ module.exports = {
                 return null;
             }
         });
-
-        // db.find({name: paramName}, function (err, docs) {
-        //     if (docs.length !== 0) {
-        //         var paramValue = docs[0].value;
-        //         console.log('get parameter value : ' + paramName + ' = ' + paramValue);
-        //         return paramValue;
-        //     }
-        //     else{
-        //         console.log('paramètre inexistant : ' + paramName);
-        //         return null;
-        //     }
-        // });
     }
 }

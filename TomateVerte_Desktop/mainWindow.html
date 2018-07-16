@@ -9,7 +9,7 @@
 <body>
     <nav>
         <div class="nav-wrapper">
-            <a class="brand-logo center">Tomate Corentin</a>
+            <a class="brand-logo center">Tomate Verte</a>
         </div>
     </nav>
 
@@ -34,60 +34,123 @@
         <button id="btnEteindreLedRouge" class="btn waves-effect waves-light">Eteindre LED Rouge</button>
     </div>
 
+    <div>
+        <p id="tomatoTimer"></p>
+        <p id="tomatoTexte"></p>
+    </div>
+
     <script>
         const electron = require('electron');
         const { ipcRenderer } = electron;
         const ul = document.querySelector('ul');
         const request = require('request');
         const dbTools = require('./dbFunctions');
+        const raspberryTools = require('./raspberryFunctions');
 
-        function actionLed(event) {
-            dbTools.getParam('ipRaspberry', function (paramValue) {
-                var couleur = event.target.Couleur;
-                var action = event.target.Action;
-                var commande = action + 'Led' + couleur;
-                console.log("commande:" + commande);
-
-                var urlService = paramValue;
-                console.log('urlService : ' + urlService);
-                var urlCommande = urlService + '/' + commande + '/';
-                console.log("urlCommande:" + urlCommande);
-
-                request(urlCommande, { json: true }, (err, res, body) => {
-                    if (err) { return console.log(err); }
-                });
-            });
+        function actionLedEvenement(event) {
+            var couleur = event.target.Couleur;
+            var action = event.target.Action;
+            raspberryTools.actionLed(action, couleur);
         }
 
+        // function actionLed(action, couleur) {
+        //     dbTools.getParam('ipRaspberry', function (paramValue) {
+        //         var urlService = paramValue;
+        //         var commande = action + 'Led' + couleur;
+        //         console.log("commande:" + commande);
+        //         console.log('urlService : ' + urlService);
+        //         var urlCommande = urlService + '/' + commande + '/';
+        //         console.log("urlCommande:" + urlCommande);
+
+        //         request(urlCommande, { json: true }, (err, res, body) => {
+        //             if (err) { return console.log(err); }
+        //         });
+        //     });
+        // }
+
         const btnAllumerLedVerte = document.querySelector('#btnAllumerLedVerte');
-        btnAllumerLedVerte.addEventListener("click", actionLed, false);
+        btnAllumerLedVerte.addEventListener("click", actionLedEvenement, false);
         btnAllumerLedVerte.Couleur = 'Verte';
         btnAllumerLedVerte.Action = 'allumer';
 
         const btnEteindreLedVerte = document.querySelector('#btnEteindreLedVerte');
-        btnEteindreLedVerte.addEventListener("click", actionLed);
+        btnEteindreLedVerte.addEventListener("click", actionLedEvenement);
         btnEteindreLedVerte.Couleur = 'Verte';
         btnEteindreLedVerte.Action = 'eteindre';
 
         const btnAllumerLedOrange = document.querySelector('#btnAllumerLedOrange');
-        btnAllumerLedOrange.addEventListener("click", actionLed, false);
+        btnAllumerLedOrange.addEventListener("click", actionLedEvenement, false);
         btnAllumerLedOrange.Couleur = 'Orange';
         btnAllumerLedOrange.Action = 'allumer';
 
         const btnEteindreLedOrange = document.querySelector('#btnEteindreLedOrange');
-        btnEteindreLedOrange.addEventListener("click", actionLed);
+        btnEteindreLedOrange.addEventListener("click", actionLedEvenement);
         btnEteindreLedOrange.Couleur = 'Orange';
         btnEteindreLedOrange.Action = 'eteindre';
 
         const btnAllumerLedRouge = document.querySelector('#btnAllumerLedRouge');
-        btnAllumerLedRouge.addEventListener("click", actionLed, false);
+        btnAllumerLedRouge.addEventListener("click", actionLedEvenement, false);
         btnAllumerLedRouge.Couleur = 'Rouge';
         btnAllumerLedRouge.Action = 'allumer';
 
         const btnEteindreLedRouge = document.querySelector('#btnEteindreLedRouge');
-        btnEteindreLedRouge.addEventListener("click", actionLed);
+        btnEteindreLedRouge.addEventListener("click", actionLedEvenement);
         btnEteindreLedRouge.Couleur = 'Rouge';
         btnEteindreLedRouge.Action = 'eteindre';
+
+        //timer
+        // Set the date we're counting down to
+
+        var dureeTomateMinute = 10 / 60;
+        var dureeAvantFinTomateMinute = 6 / 60;
+        var dureeAvantFinTomateMs = dureeAvantFinTomateMinute * 60 * 1000;
+        var dureePauseMinute = 6 / 60;
+        var dureePauseMs = dureePauseMinute * 60 * 1000;
+        var countDownDate = new Date(new Date().getTime() + (1000 * 60 * dureeTomateMinute));
+        var estTravail = false;
+        var estBientotPause = false;
+        var estPause = false;
+
+        console.log(countDownDate);
+        raspberryTools.actionLed("eteindre", "Verte");
+        raspberryTools.actionLed("eteindre", "Orange");
+        raspberryTools.actionLed("allumer", "Rouge");
+        estTravail = true;
+
+        // Update the count down every 1 second
+        var x = setInterval(function () {
+
+            // Get todays date and time
+            var now = new Date().getTime();
+
+            // Find the distance between now an the count down date
+            var distance = countDownDate - now;
+            console.log("distance = " + distance);
+
+            // Time calculations for days, hours, minutes and seconds
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display the result in the element with id="demo"
+            document.getElementById("tomatoTimer").innerHTML = minutes + "m " + seconds + "s ";
+
+            // If the count down is finished, write some text 
+            if (distance <= 0 && !estPause) {
+                clearInterval(x);
+                estPause = true;
+                raspberryTools.actionLed("allumer", "Verte");
+                raspberryTools.actionLed("eteindre", "Orange");
+                document.getElementById("tomatoTimer").innerHTML = " 0m 0s ";
+                document.getElementById("tomatoTexte").innerHTML = "Terminé";
+            }
+            else if (distance <= dureeAvantFinTomateMs && !estBientotPause) {
+                estBientotPause = true;
+                raspberryTools.actionLed("eteindre", "Rouge");
+                raspberryTools.actionLed("allumer", "Orange");
+                document.getElementById("tomatoTexte").innerHTML = "C'est bientôt la pause";
+            }
+        }, 1000);
+
 
 
     </script>
